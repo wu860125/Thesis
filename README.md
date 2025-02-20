@@ -1,123 +1,131 @@
 # Thesis_code_Jim Wu
-This repo contain all the code implementation of the thesis "On the Development of Graph Deviation Networks-based Equipment Health Prognostics Framework".
 
-Description of the folders  
+This repository contains all the code implementations for the thesis **"On the Development of Graph Deviation Networks-based Equipment Health Prognostics Framework"**.
+
+## Folder Structure
 ```
-    Code
-    |-CMP_Dataset                                  # dataset of case study
-    | |-2016 PHM DATA CHALLENGE CMP DATA SET           # original data
-    | |-MyCMP                                          # data after synchronization
-    | |-preprocess_cmp.ipynb                           # code for data preprocessing
-    |-Data_Plot                                    # data visualization
-    | |-{dataset folder}                               # generated from preprocess_cmp.ipynb
-    | |-data_plot.ipynb                                # code for Figure 35 and 36 in the thesis
-    |-Full_Scenario                                # models for full measurement scenario   
-    | |-Full_Univariate_time_series                    # models based on univariate time series
-    | | | ...
-    | | |-TTS_model.ipynb                                  # included ES, AR, ARIMA models (baseline)
-    | | |-GRU_modell.ipynb                                 # GRU model (baseline)
-    | |-Full_GDN_related                               # models based on the proposed framework-based 
-    | | | ...
-    | | |-GDN_GRU.ipynb                                    # proposed framework
-    | | |-Random_GRU.ipynb                                 # Random Features + GRU model (baseline)
-    | | |-Stats_GRU.ipynb                                  # Statistical Features + GRU model (baseline)
-    |-Sampling_Scenario                            # models for sampling measurement scenario  
-    | |-Sampling_Univariate_time_series                # models based on univariate time series models
-    | | | ...
-    | | |-Sampling_TTS_model.ipynb                         # included ES, AR, ARIMA models (baseline)
-    | | |-Sampling_GRU_model.ipynb                         # GRU model (baseline)
-    | |-Sampling_GDN_related                           # models based on the proposed framework-based 
-    | | | ...
-    | | |-Sampling_GDN_GRU.ipynb                           # proposed framework
-    | | |-Sampling_Latest_Filling                          # Latest Filling model (baseline)
-    | | |-Sampling_Random_GRU.ipynb                        # Random Features + GRU model (baseline)
-    | | |-Sampling_Stats_GRU.ipynb                         # Statistical Features + GRU model (baseline)
-    | |-VM_Stats_features                          
-    | | | ...                           
-    | | |-Stats_VM.ipynb                               # Statistical Features VM
-    | |-VM_GDN_based
-    | | | ...
-    | | |-GDN_VM.ipynb                                 # GDN-based VM
+Code
+│- CMP_Dataset                                  # Dataset of case study
+│  ├─ 2016 PHM DATA CHALLENGE CMP DATA SET     # Original data
+│  ├─ MyCMP                                    # Data after synchronization
+│  ├─ preprocess_cmp.ipynb                     # Code for data preprocessing
+│
+│- Data_Plot                                   # Data visualization
+│  ├─ {dataset folder}                         # Generated from preprocess_cmp.ipynb
+│  ├─ data_plot.ipynb                          # Code for Figure 35 and 36 in the thesis
+│
+│- Full_Scenario                              # Models for full measurement scenario
+│  ├─ Full_Univariate_time_series             # Univariate time series models
+│  │  ├─ TTS_model.ipynb                      # ES, AR, ARIMA models (baseline)
+│  │  ├─ GRU_model.ipynb                      # GRU model (baseline)
+│  ├─ Full_GDN_related                        # Models based on the proposed framework
+│  │  ├─ GDN_GRU.ipynb                         # Proposed framework
+│  │  ├─ Random_GRU.ipynb                      # Random Features + GRU model (baseline)
+│  │  ├─ Stats_GRU.ipynb                       # Statistical Features + GRU model (baseline)
+│
+│- Sampling_Scenario                          # Models for sampling measurement scenario
+│  ├─ Sampling_Univariate_time_series        # Univariate time series models
+│  │  ├─ Sampling_TTS_model.ipynb            # ES, AR, ARIMA models (baseline)
+│  │  ├─ Sampling_GRU_model.ipynb            # GRU model (baseline)
+│  ├─ Sampling_GDN_related                   # Models based on the proposed framework
+│  │  ├─ Sampling_GDN_GRU.ipynb               # Proposed framework
+│  │  ├─ Sampling_Latest_Filling.ipynb        # Latest Filling model (baseline)
+│  │  ├─ Sampling_Random_GRU.ipynb            # Random Features + GRU model (baseline)
+│  │  ├─ Sampling_Stats_GRU.ipynb             # Statistical Features + GRU model (baseline)
+│
+│- VM_Stats_features                          # Statistical Features VM
+│  ├─ Stats_VM.ipynb                          
+│- VM_GDN_based                               # GDN-based VM
+│  ├─ GDN_VM.ipynb                            
 ```
 
+## Installation
 
-# Installation
 ### Environment
-* WIN 11
-* NVIDIA GeForce RTX 3090 Ti
-  
-### Requirement
-* Python >= 3.6
-* cuda == 11.8
-* [Pytorch==2.1.0](https://pytorch.org/)
-* [PyG: torch-geometric==1.7.0](https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html)
+- Windows 11
+- NVIDIA GeForce RTX 3090 Ti
 
-### Packages
-* numpy
-* pandas
-* matplotlib
-* seaborn
-* sklearn
-* statsmodels
-* pmdarima
-* xgboost
+### Requirements
+- Python >= 3.6
+- CUDA == 11.8
+- [PyTorch == 2.1.0](https://pytorch.org/)
+- [PyG: torch-geometric == 1.7.0](https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html)
+
+### Required Packages
+```
+numpy
+pandas
+matplotlib
+seaborn
+sklearn
+statsmodels
+pmdarima
+xgboost
+```
 
 ### Quickstart
+To create a virtual environment, run the following command:
 ```
-    # run the following command in the terminal to create a virtual environment.
-    conda env create --file environment.yaml
+conda env create --file environment.yaml
 ```
 
-# Usage
+## Usage
+
 ### Data Preparation
-* The CMP dataset used in this research is sourced from [PHM Data Challenge 2016](https://phmsociety.org/conference/annual-conference-of-the-phm-society/annual-conference-of-the-prognostics-and-health-management-society-2016/phm-data-challenge-4/).  
-* First, the wafer processing time in the raw CMP data needs to be standardized to the same length, with the format matching the files in the 'MyCMP' folder.
-* Next, run the code in ```process_cmp.ipynb.``` The CMP data will be formatted, standardized, and split into training and test sets. After execution, the following folder will be generated, containing three files: ```list.txt```, ```train.csv```, and ```test.csv```.
+1. The CMP dataset is sourced from [PHM Data Challenge 2016](https://phmsociety.org/conference/annual-conference-of-the-phm-society/annual-conference-of-the-prognostics-and-health-management-society-2016/phm-data-challenge-4/).
+2. Standardize wafer processing time in the raw CMP data to the same length, following the format in `MyCMP`.
+3. Run `process_cmp.ipynb` to process, standardize, and split CMP data into training and test sets.
+4. This will generate the following files inside a dataset folder:
 ```
-    | -{dataset folder} A456/B456
-    | |-list.txt   # SVID name
-    | |-train.csv  # training set
-    | |-test.csv   # testing set
+| - {dataset folder} A456/B456
+|  ├─ list.txt   # SVID name
+|  ├─ train.csv  # Training set
+|  ├─ test.csv   # Testing set
 ```
-* Finally, place this dataset folder into the ```data``` folder of the GDN-related models as the sample below.
+5. Move the dataset folder into the `data` folder of GDN-related models as follows:
 ```
-    Full_GDN_related
-    |-data
-    | | |-A456
-    | | | |-list.txt
-    | | | |-train.csv
-    | | | |-test.csv
-    | | |-B456
-    | | | |-list.txt
-    | | | |-train.csv
-    | | | |-test.csv
+Full_GDN_related
+├─ data
+│  ├─ A456
+│  │  ├─ list.txt
+│  │  ├─ train.csv
+│  │  ├─ test.csv
+│  ├─ B456
+│  │  ├─ list.txt
+│  │  ├─ train.csv
+│  │  ├─ test.csv
 ```
-* For univariate time series models, we have separately prepared a file that contains only MRR data.
-* If using other datasets, please follow the formatted structure of the processed CMP dataset.
+6. Univariate time series models use a separate dataset file containing only MRR data.
+7. If using other datasets, follow the same format as the processed CMP dataset.
 
-### Run Model
-* Each ```.ipynb``` file includes model building, training and testing. Please execute them completely to reproduce the experimental results.
-* For full measurement scenario, there are two categories of models in ```Full_Univariate_time_series``` and ```Full_Framework_related``` folders.
-    ```Full_Univariate_time_series``` 
-        Run ```TTS_model.ipynb``` to obtain prediction results of ES, AR, and ARIMA models, and run ```GRU_model.ipynb``` for the result of the GRU model, they are all baseline model.
+### Running the Model
+Each `.ipynb` file contains model building, training, and testing steps. Execute them completely to reproduce the results.
 
-    ```Full_Framework_related```
-        Run ```Random_GRU.ipynb.ipynb``` to obtain prediction results of the Random Features + GRU model, and ```GDN_GRU.ipynb.ipynb``` for the results of Statistical Features + GRU model, they are both baseline model.
-        Run ```GDN_GRU.ipynb.ipynb``` to obtain prediction results of the our proprosed healht prognostic framework.
+#### Full Measurement Scenario
+- **Univariate Time Series Models:**
+  - Run `TTS_model.ipynb` for ES, AR, ARIMA predictions.
+  - Run `GRU_model.ipynb` for the GRU model (baseline).
+- **Proposed Framework Models:**
+  - Run `Random_GRU.ipynb` for Random Features + GRU model (baseline).
+  - Run `GDN_GRU.ipynb` for the proposed health prognostics framework.
 
-* For Sampling measurement scenario, there are also two categories of models in ```Sampling_Univariate_time_series``` and ```Sampling_Framework_related``` folders.
-    First, we construct the virtual metrology model, which is divided into two approaches: Statistical Feature-based and GDN-based, stored in ```VM_Stats_features``` and ```VM_GDN_based``` folders. By executing the ```.ipynb``` file in each folder, you can train the model and predict the unmeasured wafers' measurement value. (place the dataset in the 'data' folder as well.)
+#### Sampling Measurement Scenario
+1. **Construct the Virtual Metrology Model:**
+   - Statistical Feature-based models in `VM_Stats_features`
+   - GDN-based models in `VM_GDN_based`
+   - Execute `.ipynb` files in these folders to train the models and predict unmeasured wafer measurements.
 
-    Next, according to the explanation in the thesis, we select the Statistical Features + RF VM model. Therefore, we directly include it in the execution files of the following models.
-    ```Sampling_Univariate_time_series```
-        Run ```Sampling_TTS_model.ipynb``` to obtain prediction results of ES, AR, and ARIMA models, and run ```Sampling_GRU_model.ipynb``` for the result of the GRU model, they are all baseline model.
+2. **Run the Baseline Models:**
+   - **Univariate Time Series Models:**
+     - `Sampling_TTS_model.ipynb`: ES, AR, ARIMA models.
+     - `Sampling_GRU_model.ipynb`: GRU model.
+   - **Proposed Framework Models:**
+     - `Sampling_Random_GRU.ipynb`: Random Features + GRU.
+     - `Sampling_GDN_GRU.ipynb`: Proposed framework.
+     - `Sampling_Latest_Filling.ipynb`: Latest MRR Filling model.
 
-    ```Sampling_Framework_related```
-        Run ```Sampling_Random_GRU.ipynb.ipynb``` to obtain prediction results of the Random Features + GRU model, ```Sampling_GDN_GRU.ipynb.ipynb``` for the results of Statistical Features + GRU model, and ```Sampling_Latest_Filling.ipynb.ipynb``` for the results of Latest MRR Filling model, they are both baseline model.
-        Run ```Sampling_GDN_GRU.ipynb.ipynb``` to obtain prediction results of the our proprosed healht prognostic framework.
+> **Note:** Some models involve randomness, leading to slight variations in MSE.
 
-* Some models have inherent randomness, so the MSE may vary slightly.
-
-# Reference
-* The GDN structure is referenced from [Graph Neural Network-Based Anomaly Detection in Multivariate Time Series(AAAI'21)](https://arxiv.org/pdf/2106.06947.pdf) 
-* The code for GDN layer is derived from [a-ailin/GDN](https://github.com/d-ailin/GDN.git).
+## References
+- GDN structure is based on [Graph Neural Network-Based Anomaly Detection in Multivariate Time Series (AAAI'21)](https://arxiv.org/pdf/2106.06947.pdf).
+- GDN layer implementation is adapted from [d-ailin/GDN](https://github.com/d-ailin/GDN.git).
