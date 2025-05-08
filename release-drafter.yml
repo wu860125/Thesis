@@ -1,0 +1,84 @@
+name: Auto Create Release Draft
+
+on:
+    push:
+        branches:
+            - master
+    workflow_dispatch:
+
+jobs:
+    create-release-draft:
+        if: github.event.head_commit.message == 'Merge branch \'develop\' into master'
+        runs-on: ubuntu-latest
+
+        steps:
+        - name: Checkout repo
+          uses: actions/checkout@v3
+
+        - name: Set up GitHub CLI
+          uses: cli/cli-action@v1
+
+        - name: Extract latest PR merged from develop
+          id: get_pr
+          run: |
+            PR_JSON=$(gh pr list --base master --search "is:merged sort:updated-desc" --json number,title,body,url,mergedAt -L 1)
+            echo "$PR_JSON" > pr.json
+            echo "pr_url=$(jq -r '.[0].url' pr.json)" >> $GITHUB_OUTPUT
+            echo "pr_body=$(jq -r '.[0].body' pr.json)" >> $GITHUB_OUTPUT
+            echo "merged_at=$(jq -r '.[0].mergedAt' pr.json)" >> $GITHUB_OUTPUT
+          env:
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+        - name: Get latest tag
+          id: tag
+          run: |
+            latest_tag=$(gh release list --limit 1 | awk '{print $1}')
+            echo "Latest tag: $latest_tag"
+            version=${latest_tag#v}
+            IFS='.' read -r major minor patch <<< "$version"
+            patch=$((patch + 1))
+            new_tag="v$major.$minor.$patch"
+            echo "new_tag=$new_tag" >> $GITHUB_OUTPUT
+          env:
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+        - name: Compute Scheduled Time
+          id: schedule
+          run: |
+            merged=$(date -d "${{ steps.get_pr.outputs.merged_at }}" -u +%Y-%m-%dT%H:%M:%S)
+            minute=$(date -d "$merged" +%M)
+            if [ "$minute" -lt 30 ]; then
+            scheduled=$(date -d "$merged" -u +%Y-%m-%dT%H:00:00Z)
+            else
+            hour=$(date -d "$merged +1 hour" -u +%H)
+            scheduled=$(date -d "$merged" -u +%Y-%m-%dT${hour}:00:00Z)
+            fi
+            echo "scheduled_time=$scheduled" >> $GITHUB_OUTPUT
+
+        - name: Parse PR Body
+          id: parsed
+          run: |
+            body="${{ steps.get_pr.outputs.pr_body }}"
+            main_features=$(echo "$body" | sed -n '/## Main features/,/##/p' | sed '1d;$d' | sed '/^$/d')
+            related_pr=$(echo "$body" | sed -n '/## Related PR:/,/##/p' | sed '1d;$d' | sed '/^$/d')
+            echo "features<<EOF" >> $GITHUB_OUTPUT
+            echo "$main_features" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+            echo "related<<EOF" >> $GITHUB_OUTPUT
+            echo "$related_pr" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+
+        - name: Create Release Draft
+          run: |
+            gh release create ${{ steps.tag.outputs.new_tag }} --draft --title "Develop" --notes "
+                ## Scheduled upgrade time
+                - ${{ steps.schedule.outputs.scheduled_time }}
+
+                ## Main features
+                ${{ steps.parsed.outputs.features }}
+
+                ## Related PR:
+                ${{ steps.parsed.outputs.related }}
+                "
+          env:
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
